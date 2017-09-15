@@ -5,11 +5,13 @@ public class bicluster {
     bicluster left;
     bicluster right;
     String tweetUser;
+    int id;
 
-    bicluster(ArrayList<Double> numbers,bicluster x,bicluster y, String User){
+    bicluster(ArrayList<Double> numbers,String User,int n){
         count=numbers;
-        left=x;
-        right=y;
+        left=null;
+        right=null;
         tweetUser=User;
+        id=n;
     }
 }

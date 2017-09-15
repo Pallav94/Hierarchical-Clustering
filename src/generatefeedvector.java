@@ -144,6 +144,7 @@ public class generatefeedvector {
             System.out.println(e);
         }
     }
+    //Function to access matrix.csv
     void accessFile(){
         try {
             File f = new File("/Users/pallavsaxena/Desktop/matrix.csv");
@@ -151,7 +152,6 @@ public class generatefeedvector {
             String readLine = "";
             System.out.println("Reading file using Buffered Reader");
             while ((readLine = b.readLine()) != null) {
-                //System.out.println(readLine+"\n");
                 lineData.add(readLine);
             }
         } catch (IOException e) {
@@ -163,27 +163,28 @@ public class generatefeedvector {
        for(i=1;i<lineData.size();i++) {
            String[] row= lineData.get(i).split("\\s");
            ArrayList<Double> numbers=new ArrayList<Double>();
-           //System.out.print(row[0]+" :");
            for(int j=1;j<row.length;j++){
                numbers.add(Double.parseDouble(row[j]));
-               //System.out.print(numbers.get(j-1)+"  ");
            }
-           //System.out.println();
-           bicluster b=new bicluster(numbers,null,null,row[0]);
+           bicluster b=new bicluster(numbers,row[0],0);
            clust.add(b);
        }
     }
-
+    //Initial List of users
+    void list(){
+        for(int i=0;i<clust.size();i++){
+            System.out.println(clust.get(i).tweetUser);
+        }
+    }
+    //Function to create cluster
     bicluster treeCluster(){
 
         while(clust.size()>1){
-            System.out.println("Cluster Size:"+clust.size());
             int lowesti=0;
             int lowestj=1;
-            double closest=clusters.pearson(clust.get(0),clust.get(1));
+            double closest=clusters.pearson(clust.get(lowesti),clust.get(lowestj));
             for(int i=0;i<clust.size();i++){
                 for(int j=i+1;j<clust.size();j++){
-
                     double d=clusters.pearson(clust.get(i),clust.get(j));
                     if(d<closest){
                         closest=d;
@@ -192,11 +193,7 @@ public class generatefeedvector {
                     }
                 }
             }
-            System.out.println("+++++++++");
             double sum=0;
-            //System.out.println(i+" "+clust.get(i).count.size());
-            //System.out.println(j+" "+clust.get(j).count.size());
-
             System.out.println("Closest:"+closest);
             System.out.println("i:"+lowesti+" "+"j:"+lowestj);
             ArrayList<Double> mergevec=new ArrayList<Double>();
@@ -204,24 +201,32 @@ public class generatefeedvector {
                 sum=(clust.get(lowesti).count.get(k)+clust.get(lowestj).count.get(k))/2;
                 mergevec.add(sum);
             }
-            //System.out.println("MergeSum:"+sum);
-
-            bicluster b=new bicluster(mergevec,clust.get(lowesti),clust.get(lowestj), "       ____");
-            clust.add(b);
+            System.out.println("MergeSum:"+sum);
+            bicluster b=new bicluster(mergevec, clust.get(lowesti).tweetUser+" "+clust.get(lowestj).tweetUser,1);
+            b.left=clust.get(lowesti);
+            b.right=clust.get(lowestj);
             clust.remove(lowesti);
-            clust.remove(lowestj);
+            clust.remove(lowestj-1);
             System.out.println("Removed:"+lowesti+"____"+lowestj);
-            ;
+            clust.add(b);
+            for(int h=0;h<clust.size();h++){
+                System.out.println("User:"+clust.get(h).tweetUser);
+            }
         }
         return clust.get(0);
     }
+    //Printing Cluster Tree
     void printClust(bicluster root){
         if(root==null){
             return;
         }
-        if(root.tweetUser!=null){
+        if(root.id==0){
             System.out.println(root.tweetUser);
         }
+        else if(root.id==1){
+            System.out.println("   -----");
+        }
+
         printClust(root.left);
         printClust(root.right);
     }
@@ -229,17 +234,18 @@ public class generatefeedvector {
     public static void main(String[] args) {
         generatefeedvector gfv = new generatefeedvector();
         ArrayList<String> tweetsData = gfv.hashtags("apple");
+        //Tweets from users
         System.out.println("___________________________");
-        /*for (int i = 0; i < tweetsData.size(); i++) {
+        for (int i = 0; i < tweetsData.size(); i++) {
             System.out.println(tweetsData.get(i) + "\n");
-        }*/
+        }
         gfv.getWordCounts(tweetsData);
         gfv.validWords();
         gfv.bigMatrixFile();
         gfv.accessFile();
         gfv.clusterNodes();
+        gfv.list();
         bicluster root=gfv.treeCluster();
         gfv.printClust(root);
-
     }
 }
