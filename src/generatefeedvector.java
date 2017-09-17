@@ -62,10 +62,10 @@ public class generatefeedvector {
     //Function to obtain tweets from each user
     public ArrayList<String> hashtags(String hashtag) {
         ConfigurationBuilder cf = new ConfigurationBuilder();
-        cf.setDebugEnabled(true).setOAuthConsumerKey("vWMRY8FaDc9rrIB2FalT7NBHt")
-                .setOAuthConsumerSecret("87jF0yrFVZCrb6uRE9U8YIvEQCdOHm8R3UXfUBW0o4taZBOngF")
-                .setOAuthAccessToken("2328407071-Wgo7KmaOIgdBvirdQ4ShQ6nyPMEhmLcUI7fWykT")
-                .setOAuthAccessTokenSecret("mHC8WvrBQhcFXEaBVf1Io9TsF3kL1IAlXan5RvTCABqsN");
+        cf.setDebugEnabled(true).setOAuthConsumerKey("                    ")
+                .setOAuthConsumerSecret("                                 ")
+                .setOAuthAccessToken("                                    ")
+                .setOAuthAccessTokenSecret("                              ");
         TwitterFactory tf = new TwitterFactory(cf.build());
         int i = 0;
         Twitter twitter = tf.getInstance();
